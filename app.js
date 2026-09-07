@@ -1374,9 +1374,9 @@ document.getElementById('receipt-file').addEventListener('change', async (e) => 
   document.getElementById('receipt-upload-area').style.display = 'none';
   document.getElementById('receipt-loading').style.display = 'block';
 
-  try {
-    const reader = new FileReader();
-    reader.onload = async (event) => {
+  const reader = new FileReader();
+  reader.onload = async (event) => {
+    try {
       const base64Image = event.target.result;
       
       const res = await window.fetch(API_BASE_URL + '/api/scan-receipt', {
@@ -1386,20 +1386,25 @@ document.getElementById('receipt-file').addEventListener('change', async (e) => 
       });
       
       if (!res.ok) {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to scan receipt');
       }
       
       const data = await res.json();
       scannedReceiptItems = data.items || [];
       renderReceiptResults();
-    };
-    reader.readAsDataURL(file);
-  } catch (err) {
-    showToast(err.message, 'error');
+    } catch (err) {
+      showToast(err.message || 'Failed to scan receipt', 'error');
+      document.getElementById('receipt-loading').style.display = 'none';
+      document.getElementById('receipt-upload-area').style.display = 'block';
+    }
+  };
+  reader.onerror = () => {
+    showToast('Failed to read image file', 'error');
     document.getElementById('receipt-loading').style.display = 'none';
     document.getElementById('receipt-upload-area').style.display = 'block';
-  }
+  };
+  reader.readAsDataURL(file);
 });
 
 function renderReceiptResults() {
