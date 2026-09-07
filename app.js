@@ -292,7 +292,13 @@ async function startScanning() {
   try {
     await state.html5Qrcode.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 250, height: 250 } },
+      { 
+        fps: 25, 
+        qrbox: { width: 300, height: 150 },
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true
+        }
+      },
       onScanSuccess,
       (errorMessage) => { /* Ignore regular scan failures */ }
     );
