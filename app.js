@@ -1649,6 +1649,6 @@ document.getElementById('btn-save-settings').addEventListener('click', async () 
     showToast(err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Save Changes';
+    btn.textContent = 'Save Locations & Categories';
   }
 });
