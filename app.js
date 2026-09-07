@@ -68,9 +68,6 @@ function setupAuthEvents() {
   document.getElementById('header-title').addEventListener('click', () => {
     const name = localStorage.getItem('mygrocery_name') || 'Household';
     document.getElementById('account-household-name').textContent = name;
-    document.getElementById('old-password').value = '';
-    document.getElementById('new-password').value = '';
-    document.getElementById('confirm-password').value = '';
     document.getElementById('modal-account').style.display = 'flex';
   });
 
@@ -1545,6 +1542,9 @@ function renderDynamicUI() {
 
 document.getElementById('btn-open-settings').addEventListener('click', () => {
   document.getElementById('modal-account').style.display = 'none';
+  document.getElementById('old-password').value = '';
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
   renderSettingsLists();
   document.getElementById('modal-settings').style.display = 'flex';
 });

@@ -42,19 +42,10 @@
   <!-- MODAL: Account Settings -->
   <div id="modal-account" class="modal" style="display:none">
     <div class="modal-content centered-dialog" style="max-width: 340px;">
-      <h2 style="margin-top: 0; text-align: center;">⚙️ Account</h2>
+      <h2 style="margin-top: 0; text-align: center;">Account</h2>
       <div id="account-household-name" style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 20px; color: var(--primary);"></div>
       
-      <div id="change-password-section" style="margin-bottom: 16px;">
-        <h3 style="margin: 0 0 8px 0; font-size: 14px;">Change Password</h3>
-        <input type="password" id="old-password" placeholder="Current Password" class="form-input" style="margin-bottom: 8px;">
-        <input type="password" id="new-password" placeholder="New Password" class="form-input" style="margin-bottom: 8px;">
-        <input type="password" id="confirm-password" placeholder="Confirm Password" class="form-input" style="margin-bottom: 8px;">
-        <button id="btn-change-pass" class="btn btn-primary" style="width: 100%;">Update Password</button>
-      </div>
-
-            <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;">
-      <button id="btn-open-settings" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;">⚙️ Settings</button>
+      <button id="btn-open-settings" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;">Settings</button>
       <button id="btn-logout" class="btn btn-outline" style="width: 100%; color: var(--danger); border-color: var(--danger);">Logout</button>
       <button id="btn-close-account" class="btn btn-text" style="width: 100%; margin-top: 8px;">Cancel</button>
     </div>
@@ -274,6 +265,15 @@
             <button id="btn-add-category" class="btn btn-outline" style="flex: 1;">Add</button>
           </div>
         </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+
+        <!-- Change Password -->
+        <h3 style="margin-top: 0;">Change Password</h3>
+        <input type="password" id="old-password" placeholder="Current Password" class="form-input" style="margin-bottom: 8px;">
+        <input type="password" id="new-password" placeholder="New Password" class="form-input" style="margin-bottom: 8px;">
+        <input type="password" id="confirm-password" placeholder="Confirm Password" class="form-input" style="margin-bottom: 8px;">
+        <button id="btn-change-pass" class="btn btn-primary" style="width: 100%;">Update Password</button>
 
       </div>
       <div style="padding: 16px; border-top: 1px solid #eee;">
