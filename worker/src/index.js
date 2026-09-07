@@ -48,6 +48,8 @@ export default {
       if (path === '/api/grocery' && request.method === 'POST') return await handlePostGrocery(request, env.DB, hhId);
       if (path.startsWith('/api/grocery/') && request.method === 'PUT') return await handlePutGrocery(env.DB, path.split('/')[3], hhId);
       if (path.startsWith('/api/grocery/') && request.method === 'DELETE') return await handleDeleteGrocery(env.DB, path.split('/')[3], hhId);
+      if (path === '/api/preferences' && request.method === 'GET') return await handleGetPreferences(env.DB, hhId);
+      if (path === '/api/preferences' && request.method === 'PUT') return await handlePutPreferences(request, env.DB, hhId);
       if (path === '/api/households/password' && request.method === 'PUT') return await handleChangePassword(request, env.DB, hhId);
       if (path === '/api/scan-receipt' && request.method === 'POST') return await handleScanReceipt(request, env);
       
@@ -306,6 +308,19 @@ If you cannot read the receipt or find no items, return an empty array: []`;
   } catch (e) {
     return errorResponse('Failed to process receipt: ' + e.message, 500);
   }
+}
+
+async function handleGetPreferences(db, hhId) {
+  const result = await db.prepare('SELECT preferences FROM households WHERE id = ?').bind(hhId).first();
+  const prefs = result?.preferences ? JSON.parse(result.preferences) : {};
+  return jsonResponse({ preferences: prefs });
+}
+
+async function handlePutPreferences(request, db, hhId) {
+  const body = await request.json();
+  const prefString = JSON.stringify(body.preferences || {});
+  await db.prepare('UPDATE households SET preferences = ? WHERE id = ?').bind(prefString, hhId).run();
+  return jsonResponse({ success: true, preferences: body.preferences });
 }
 
 async function handleChangePassword(request, db, hhId) {

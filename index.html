@@ -53,7 +53,8 @@
         <button id="btn-change-pass" class="btn btn-primary" style="width: 100%;">Update Password</button>
       </div>
 
-      <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;">
+            <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;">
+      <button id="btn-open-settings" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;">??? Settings</button>
       <button id="btn-logout" class="btn btn-outline" style="width: 100%; color: var(--danger); border-color: var(--danger);">Logout</button>
       <button id="btn-close-account" class="btn btn-text" style="width: 100%; margin-top: 8px;">Cancel</button>
     </div>
@@ -65,11 +66,7 @@
       <!-- VIEW: Inventory -->
       <div id="view-inventory">
         <div class="sticky-controls">
-          <div class="segmented-control" id="inventory-locations">
-            <button class="segment active" data-loc="fridge">Fridge</button>
-            <button class="segment" data-loc="freezer">Freezer</button>
-            <button class="segment" data-loc="pantry">Pantry</button>
-          </div>
+          <div class="segmented-control" id="inventory-locations"></div>
           
           <div class="search-sort-container">
             <div class="search-bar">
@@ -236,11 +233,7 @@
           <div id="receipt-items-list"></div>
           <div style="margin-top: 12px;">
             <label style="font-size: 14px; font-weight: bold;">Add to:</label>
-            <div class="segmented-control" id="receipt-location" style="margin-top: 4px;">
-              <button class="segment active" data-loc="fridge">Fridge</button>
-              <button class="segment" data-loc="freezer">Freezer</button>
-              <button class="segment" data-loc="pantry">Pantry</button>
-            </div>
+            <div class="segmented-control" id="receipt-location" style="margin-top: 4px;"></div>
           </div>
           <button class="btn btn-primary" id="btn-add-receipt-items" style="width: 100%; margin-top: 16px;">Add Selected Items</button>
         </div>
@@ -248,6 +241,46 @@
     </div>
   </div>
 
+  <!-- MODAL: Settings -->
+  <div id="modal-settings" class="modal" style="display:none">
+    <div class="modal-content slide-up" style="max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h2>??? Settings</h2>
+        <button class="close-btn" id="close-settings">�</button>
+      </div>
+      <div class="form-body" style="overflow-y: auto; flex: 1;">
+        
+        <!-- Locations -->
+        <h3 style="margin-top: 0;">Custom Locations</h3>
+        <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Default: Fridge, Freezer, Pantry</p>
+        <div id="settings-locations-list" style="margin-bottom: 12px;"></div>
+        <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+          <input type="text" id="new-location-name" placeholder="e.g. Wine Cellar" class="form-input" style="margin:0; flex:1;">
+          <button id="btn-add-location" class="btn btn-outline">Add</button>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+
+        <!-- Categories -->
+        <h3 style="margin-top: 0;">Custom Categories</h3>
+        <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Add your own categories.</p>
+        <div id="settings-categories-list" style="margin-bottom: 12px;"></div>
+        
+        <div style="display: flex; gap: 8px; flex-direction: column; margin-bottom: 8px;">
+          <input type="text" id="new-cat-name" placeholder="Name (e.g. Dog Food)" class="form-input" style="margin:0;">
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="new-cat-emoji" placeholder="Emoji (??)" class="form-input" style="margin:0; width: 80px; text-align: center;">
+            <input type="color" id="new-cat-color" value="#8D6E63" style="width: 50px; height: 48px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+            <button id="btn-add-category" class="btn btn-outline" style="flex: 1;">Add</button>
+          </div>
+        </div>
+
+      </div>
+      <div style="padding: 16px; border-top: 1px solid #eee;">
+        <button id="btn-save-settings" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+      </div>
+    </div>
+  </div>
   <!-- MODAL: Scanner -->
   <div id="modal-scanner" class="modal" style="display:none">
     <div class="modal-content full-screen">
@@ -324,11 +357,7 @@
         
         <div class="form-group">
           <label>Storage Location</label>
-          <div class="segmented-control" id="form-location">
-            <button class="segment active" data-val="fridge">Fridge</button>
-            <button class="segment" data-val="freezer">Freezer</button>
-            <button class="segment" data-val="pantry">Pantry</button>
-          </div>
+          <div class="segmented-control" id="form-location"></div>
         </div>
         
         <div class="form-group">
