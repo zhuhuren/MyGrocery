@@ -274,40 +274,53 @@ Return ONLY a valid JSON array, no other text. Example:
 
 If you cannot read the receipt or find no items, return an empty array: []`;
 
-  try {
-    const imageData = body.image.replace(/^data:image\/[a-z]+;base64,/, '');
-    
-    const geminiRes = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + env.GEMINI_API_KEY,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: prompt },
-              { inline_data: { mime_type: body.mime_type || 'image/jpeg', data: imageData } }
-            ]
-          }]
-        })
+  const imageData = body.image.replace(/^data:image\/[a-z]+;base64,/, '');
+  const modelsToTry = ['gemini-3.6-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-latest'];
+  let lastErrorText = '';
+
+  for (const model of modelsToTry) {
+    // Up to 2 attempts per model for temporary 503 spikes
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: prompt },
+                  { inline_data: { mime_type: body.mime_type || 'image/jpeg', data: imageData } }
+                ]
+              }]
+            })
+          }
+        );
+
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          const jsonMatch = text.match(/\[[\s\S]*\]/);
+          const items = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
+          return jsonResponse({ items });
+        }
+
+        lastErrorText = await geminiRes.text();
+        
+        // If 503, pause briefly before retrying or trying next model
+        if (geminiRes.status === 503 && attempt === 0) {
+          await new Promise(r => setTimeout(r, 1500));
+        } else {
+          break; // move to next model if not 503 or max attempts reached
+        }
+      } catch (e) {
+        lastErrorText = e.message;
       }
-    );
-
-    if (!geminiRes.ok) {
-      const errText = await geminiRes.text();
-      return errorResponse('Gemini API error: ' + errText, 500);
     }
-
-    const geminiData = await geminiRes.json();
-    const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-    
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    const items = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
-
-    return jsonResponse({ items });
-  } catch (e) {
-    return errorResponse('Failed to process receipt: ' + e.message, 500);
   }
+
+  return errorResponse('Gemini API error: ' + lastErrorText, 500);
 }
 
 async function handleGetPreferences(db, hhId) {
