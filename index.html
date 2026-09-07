@@ -97,6 +97,7 @@
           <p>No items found.</p>
         </div>
         
+        <button class="fab" id="fab-receipt" style="bottom: calc(var(--nav-height) + 88px); background: #FF9800;">🧾</button>
         <button class="fab" id="fab-add">+</button>
       </div>
       
@@ -211,6 +212,42 @@
   </div>
   
     </div>
+  
+  <!-- MODAL: Receipt Scanner -->
+  <div id="modal-receipt" class="modal" style="display:none">
+    <div class="modal-content slide-up" style="max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h2>📷 Scan Receipt</h2>
+        <button class="close-btn" id="close-receipt">×</button>
+      </div>
+      <div class="form-body" style="overflow-y: auto; flex: 1;">
+        <div id="receipt-upload-area" style="text-align: center; padding: 20px;">
+          <p>Take a photo of your grocery receipt</p>
+          <input type="file" id="receipt-file" accept="image/*" capture="environment" style="display:none">
+          <button class="btn btn-primary" id="btn-take-receipt" style="width: 100%; margin-bottom: 12px;">📷 Take Photo</button>
+          <button class="btn btn-outline" id="btn-pick-receipt" style="width: 100%;">📁 Choose from Gallery</button>
+        </div>
+        <div id="receipt-loading" style="display:none; text-align: center; padding: 40px;">
+          <p style="font-size: 18px;">🤖 AI is reading your receipt...</p>
+          <p style="color: var(--text-light);">This may take a few seconds</p>
+        </div>
+        <div id="receipt-results" style="display:none;">
+          <p style="margin-bottom: 12px; font-weight: bold;">Found items (uncheck to skip):</p>
+          <div id="receipt-items-list"></div>
+          <div style="margin-top: 12px;">
+            <label style="font-size: 14px; font-weight: bold;">Add to:</label>
+            <div class="segmented-control" id="receipt-location" style="margin-top: 4px;">
+              <button class="segment active" data-loc="fridge">Fridge</button>
+              <button class="segment" data-loc="freezer">Freezer</button>
+              <button class="segment" data-loc="pantry">Pantry</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-add-receipt-items" style="width: 100%; margin-top: 16px;">Add Selected Items</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: Scanner -->
   <div id="modal-scanner" class="modal" style="display:none">
     <div class="modal-content full-screen">

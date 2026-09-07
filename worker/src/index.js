@@ -49,6 +49,7 @@ export default {
       if (path.startsWith('/api/grocery/') && request.method === 'PUT') return await handlePutGrocery(env.DB, path.split('/')[3], hhId);
       if (path.startsWith('/api/grocery/') && request.method === 'DELETE') return await handleDeleteGrocery(env.DB, path.split('/')[3], hhId);
       if (path === '/api/households/password' && request.method === 'PUT') return await handleChangePassword(request, env.DB, hhId);
+      if (path === '/api/scan-receipt' && request.method === 'POST') return await handleScanReceipt(request, env);
       
       return errorResponse('Not found', 404);
     } catch (e) {
@@ -252,6 +253,59 @@ async function handlePutGrocery(db, id, hhId) {
 async function handleDeleteGrocery(db, id, hhId) {
   await db.prepare('DELETE FROM grocery_list WHERE id = ? AND household_id = ?').bind(id, hhId).run();
   return jsonResponse({ success: true });
+}
+
+async function handleScanReceipt(request, env) {
+  const body = await request.json();
+  if (!body.image) return errorResponse('Image data required', 400);
+
+  const prompt = `You are a grocery receipt parser. Analyze this receipt image and extract all purchased items.
+
+For each item, return:
+- "name": a clean, readable product name (e.g. "Whole Milk" not "WHL MLK 2%")
+- "category": one of EXACTLY these values: Dairy, Meat & Fish, Produce, Dish, Bakery & Grains, Frozen, Canned & Jarred, Beverages, Snacks, Condiments, Other
+- "quantity": number purchased (default 1)
+- "unit_cost": price per item in dollars as a number (e.g. 3.99)
+
+Return ONLY a valid JSON array, no other text. Example:
+[{"name": "Whole Milk", "category": "Dairy", "quantity": 1, "unit_cost": 4.29}]
+
+If you cannot read the receipt or find no items, return an empty array: []`;
+
+  try {
+    const imageData = body.image.replace(/^data:image\/[a-z]+;base64,/, '');
+    
+    const geminiRes = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + env.GEMINI_API_KEY,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: prompt },
+              { inline_data: { mime_type: body.mime_type || 'image/jpeg', data: imageData } }
+            ]
+          }]
+        })
+      }
+    );
+
+    if (!geminiRes.ok) {
+      const errText = await geminiRes.text();
+      return errorResponse('Gemini API error: ' + errText, 500);
+    }
+
+    const geminiData = await geminiRes.json();
+    const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+    
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    const items = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
+
+    return jsonResponse({ items });
+  } catch (e) {
+    return errorResponse('Failed to process receipt: ' + e.message, 500);
+  }
 }
 
 async function handleChangePassword(request, db, hhId) {
