@@ -278,7 +278,7 @@ If you cannot read the receipt or find no items, return an empty array: []`;
     const imageData = body.image.replace(/^data:image\/[a-z]+;base64,/, '');
     
     const geminiRes = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + env.GEMINI_API_KEY,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + env.GEMINI_API_KEY,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
