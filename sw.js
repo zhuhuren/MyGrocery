@@ -1,10 +1,10 @@
-const CACHE_NAME = 'mygrocery-v36';
+const CACHE_NAME = 'mygrocery-v37';
 const ASSETS = [
-  '/MyFridge/',
-  '/MyFridge/index.html',
-  '/MyFridge/style.css',
-  '/MyFridge/app.js',
-  '/MyFridge/manifest.json',
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json',
   'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'
 ];
 
